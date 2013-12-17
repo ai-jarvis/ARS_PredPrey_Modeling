@@ -17,76 +17,76 @@ public class AnimalForgingEvolutionOfGoalDirectedCognition {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-
-        ArrayList< animal >individuals = new ArrayList<>();
-        EvolutionReproduction eRep;
+    public void runIteration( int itNum ) throws Exception {
         
-        for( int generations = 0; generations < 100; generations++){
+        int numGenerations = 100;
+        int numSims = 100;
+        int worldSizeX = 100;
+        int worldSizeY = 100;
+        int numDaysInSimulation = 1000;
+        int foodPatchNum = 5;
+        int foodPatchSize = 5;
+        
+        ArrayList< ForgingAnimal >individuals;
+        FitnessEvaluation eRep = new FitnessEvaluation( numGenerations );
+        
+        ForgingAnimalReproduction faRep = new ForgingAnimalReproduction( 0.01f );
+        individuals = faRep.newGeneration( numSims );
+        
+        System.out.println("Generation: 0" );
+        
+        ForgingWorld world = new ForgingWorld( worldSizeX, worldSizeY, individuals );
             
-            System.out.println("Generation: " + generations);
-            
-            for( int i = 0; i < 5; i++ )
-                individuals.add( new animal( i, i*i * 547, 1000 ) );
+        world.setup_food( foodPatchNum, foodPatchSize );
+        world.runSimulation( numDaysInSimulation );
 
-            forgingWorld world = new forgingWorld( 300, 300, individuals );
-            world.setup_food(45,5);
-            world.runSimulation(1000);
+        world.writeWorld( "./run/iteration_" + itNum + "_generation_0.jpg" );
+
+        eRep.assessGenerationFitness( individuals );
+
+        //System.out.println( eRep.numBestFitness() );
+        
+        for( int generations = 1; generations < numGenerations; generations++){
             
-            world.writeWorld( "./run/generation_" + generations + ".jpg" );
+            System.out.println("Generation: " + generations + "." + itNum);
+
+            individuals = faRep.nextGeneration( individuals );
             
-            eRep = new EvolutionReproduction( individuals );
-            System.out.println( eRep.numBestFitness() );
+            world = new ForgingWorld( worldSizeX, worldSizeY, individuals );
             
-            individuals.clear();
+            world.setup_food( foodPatchNum, foodPatchSize );
+            world.runSimulation( numDaysInSimulation );
+            
+            world.writeWorld( "./run/iteration_number_" + itNum + 
+                    "_generation_" + generations + ".jpg" );
+            
+            eRep.assessGenerationFitness( individuals );
+            
+//            System.out.println( eRep.fitnessSum());
+//            System.out.println( eRep.bestDefense());
+//            System.out.println( eRep.bestFit());
+//            System.out.println( eRep.bestMemory());
+//            System.out.println( eRep.bestTurn());
+//            System.out.println( eRep.bestNoTurn());
         }
         
+        String filename = "generations_" + numGenerations +
+                "_iteration_" + itNum + ".csv";
         
-//        //for( animal aIndividual : individuals )
-//        //    aIndividual.communitySize();
-//        
-//        for( int i = 0; i < 1000; i++ )
-//            for( animal aIndividual : individuals )
-//                aIndividual.runNextStep(i);
-//        
-//        world.writeWorld("test.jpg");
-//        
-//        for( animal aIndividual : individuals )
-//            aIndividual.fitness();
+        eRep.writeLogToFile( filename );
         
-        //GifOfEvolution video = new GifOfEvolution( 10, true, 3);
-        
-//        for( int j = 0; j < 1; j++ ){
-//            
-//            System.out.println( "Generation: " + j );
-//        
-//            for( int i = 0; i < 5; i++ ){
-//
-//                world = new forgingWorld( 150, 150 );
-//                world.setup_food(50,5);
-//                image = new animal( 1, 1, 1000, world );
-//
-//                image.run();
-//                //video.addImage( world.getWorldImage() );
-//                //world.writeWorld( "./run/world_" + i + "_generation_" + j + ".jpg" );
-//            }
-//        }
-        
-        //video.writeGIF("test.gif");
-        
-        //world.printWorld();
-//        for( int j = 0; j < 100; j++ ){
-//            
-//            System.out.println("Generation: " + j);
-//            
-//            for( int i = 0; i < 1000; i++ ){
-//                world = new forgingWorld(150, 150);
-//                world.setup_food(25, 2);
-//                animal test = new animal( i, j *i, 200, world );
-//                test.run();
-//            }
-//        }
-        //world.printWorld();
     }
     
+    public static void main(String[] args) throws Exception{
+        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 0 );
+        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 1 );
+        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 2 );
+        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 3 );
+        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 4 );
+//        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 5 );
+//        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 6 );
+//        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 7 );
+//        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 8 );
+//        new AnimalForgingEvolutionOfGoalDirectedCognition().runIteration( 9 );
+    }
 }
